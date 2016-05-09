@@ -60,7 +60,7 @@ $(function() {
   }
 
   function maxOffset(zoom) {
-    return prog.frames * FRAME_WIDTH / zoom;
+    return prog.frames * FRAME_WIDTH / zoom - cvs.width;
   }
 
   function offsetBy(shift) {
