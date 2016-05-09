@@ -104,7 +104,5 @@ sub get_frames {
   return @out;
 }
 
-#montage $( tail -n +10000 frames | head -n 256 ) -geometry +0+0 -tile 16x16 slice.jpg
-
 # vim:ts=2:sw=2:sts=2:et:ft=perl
 
