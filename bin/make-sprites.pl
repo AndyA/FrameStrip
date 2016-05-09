@@ -78,8 +78,11 @@ sub make_sprites {
     while (@fr) {
       my $sprite = file $step_dir, sprintf "s%04d.jpg", $next++;
       my @src = splice @fr, 0, $chunk;
+      push @src, ('xc:black') x ( $chunk - @src ) if @src < $chunk;
       my @cmd = (
-        'montage', @src,
+        'montage',
+        -size => $O{size},
+        @src,
         -geometry => '+0+0',
         -tile     => join( 'x', SPRITE_WIDTH, SPRITE_HEIGHT ),
         $sprite
