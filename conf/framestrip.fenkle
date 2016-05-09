@@ -1,0 +1,20 @@
+# framestrip.fenkle
+
+ProxyRequests Off
+
+<VirtualHost *:80>
+  ServerName framestrip.fenkle
+
+  DocumentRoot /opt/framestrip/app/www
+  CustomLog /opt/framestrip/app/logs/apache.access_log combined
+  ErrorLog /opt/framestrip/app/logs/apache.error_log
+
+  <Directory "/opt/framestrip/app/www">
+    AllowOverride All
+    Options +ExecCGI -MultiViews +FollowSymLinks
+    Order allow,deny
+    Allow from all
+  </Directory>
+
+</VirtualHost>
+
