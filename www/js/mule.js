@@ -43,13 +43,11 @@ $(function() {
   }
 
   function redrawStrip(zoom, offset, width) {
-    console.log("zoom=" + zoom + ", offset=" + offset + ", width=" + width);
     var first = Math.floor(offset / FRAME_WIDTH);
     var shift = offset % FRAME_WIDTH;
 
     for (var f = 0; f < width; f++) {
       (function(frame, pos) {
-        //        console.log(frame);
         fs.getFrame(frame, zoom)
           .done(function(img, spec) {
             ctx.drawImage(img,
@@ -68,7 +66,6 @@ $(function() {
   function offsetBy(shift) {
     var noff = Math.max(0, Math.min(offset + shift, maxOffset(zoom)));
     if (noff !== offset) {
-      console.log("noff=" + noff);
       offset = noff;
       redrawStrip(zoom, offset, strip_width);
     }
