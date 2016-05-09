@@ -1,0 +1,107 @@
+#!/usr/bin/env perl
+
+use v5.10;
+
+use autodie;
+use strict;
+use warnings;
+
+use Getopt::Long;
+use Path::Class;
+
+use constant SPRITE_WIDTH  => 16;
+use constant SPRITE_HEIGHT => 16;
+
+use constant USAGE => <<EOT;
+Usage: $0 [options] <video> ...
+
+Options:
+
+  -o, --output <dir>    Output to dir. Default "./output"
+  -s, --size   <W>x<H>  Tile size. Default "128x72"
+
+EOT
+
+my %O = ( output => 'output', size => '128x72' );
+
+GetOptions(
+  'o|output:s' => \$O{output},
+  's|size:s'   => \$O{size}
+) or die USAGE;
+
+for my $vid (@ARGV) {
+  process($vid);
+}
+
+sub process {
+  my $vid = file shift;
+
+  ( my $name = $vid->basename ) =~ s/\.[^.]+$//;
+  my $frames_dir  = dir $O{output}, 'frames',  $name;
+  my $sprites_dir = dir $O{output}, 'sprites', $name;
+
+  #  extract_frames( $vid, $frames_dir );
+  make_sprites( $frames_dir, $sprites_dir );
+}
+
+sub extract_frames {
+  my ( $vid, $frames_dir ) = @_;
+
+  $frames_dir->mkpath;
+  my $frame = file $frames_dir, 'f%08d.png';
+
+  my @cmd = (
+    'ffmpeg',
+    -i      => $vid,
+    -vf     => 'pad=max(iw\,ih*(16/9)):ow/(16/9):(ow-iw)/2:(oh-ih)/2',
+    -aspect => '16:9',
+    -s      => $O{size},
+    -y      => $frame
+  );
+  say join ' ', @cmd;
+  system @cmd;
+  die $? if $?;
+}
+
+sub make_sprites {
+  my ( $frames_dir, $sprites_dir ) = @_;
+
+  my @frames = sort $frames_dir->children;
+  my $chunk  = SPRITE_WIDTH * SPRITE_HEIGHT;
+
+  for ( my $step = 1; @frames / $chunk / $step > 1; $step *= 2 ) {
+    my $step_dir = dir $sprites_dir, 'x' . $step;
+    say $step_dir;
+    $step_dir->mkpath;
+    my @fr = get_frames( $step, @frames );
+    my $next = 0;
+    while (@fr) {
+      my $sprite = file $step_dir, sprintf "s%04d.jpg", $next++;
+      my @src = splice @fr, 0, $chunk;
+      my @cmd = (
+        'montage', @src,
+        -geometry => '+0+0',
+        -tile     => join( 'x', SPRITE_WIDTH, SPRITE_HEIGHT ),
+        $sprite
+      );
+      say join ' ', @cmd;
+      system @cmd;
+      die $? if $?;
+    }
+  }
+}
+
+sub get_frames {
+  my ( $step, @frames ) = @_;
+  return @frames if $step == 1;
+  my @out = ();
+  for ( my $i = 0; $i < @frames; $i += $step ) {
+    push @out, $frames[$i];
+  }
+  return @out;
+}
+
+#montage $( tail -n +10000 frames | head -n 256 ) -geometry +0+0 -tile 16x16 slice.jpg
+
+# vim:ts=2:sw=2:sts=2:et:ft=perl
+
