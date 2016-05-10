@@ -17,7 +17,7 @@ $.extend(FrameStrip.prototype, (function() {
   var FRAME_WIDTH = 128;
   var FRAME_HEIGHT = 72;
   var MIN_ZOOM = 1;
-  var MAX_ZOOM = 4096;
+  var MAX_ZOOM = 8192;
   var FPS = 25;
 
   function quantize(x, q) {
@@ -294,10 +294,21 @@ $.extend(FrameStrip.prototype, (function() {
       if (newZoom !== this.opt.zoom) {
         var oldZoom = this.opt.zoom;
         //        console.log("zoom:" + newZoom);
-        var half = this.canvas[0].width / 2;
         this.opt.zoom = newZoom;
-        this.opt.offset = Math.floor(Math.max(0, Math.min((this.opt.offset +
-          half) * (oldZoom / newZoom) - half, this.maxOffset())));
+
+        var newOffset;
+        var half = this.canvas[0].width / 2;
+
+        if (this.opt.current !== null) {
+          var size = this.store.getTileSize();
+          newOffset = this.opt.current * size.width / newZoom - half;
+        } else {
+          newOffset =
+            (this.opt.offset + half) * (oldZoom / newZoom) - half;
+        }
+
+        this.opt.offset = Math.floor(Math.max(0, Math.min(newOffset,
+          this.maxOffset())));
 
         this.redraw();
       }

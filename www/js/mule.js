@@ -3,7 +3,7 @@ $(function() {
   var FRAME_WIDTH = 128;
   var FRAME_HEIGHT = 72;
   var MIN_ZOOM = 1;
-  var MAX_ZOOM = 4096;
+  var MAX_ZOOM = 8192;
 
   var prog = {
     sprites: "/sprites/20020705-013950-kilroy",
@@ -22,11 +22,13 @@ $(function() {
   var frameStore = new FrameStore(prog);
 
   var frameStripIn = new FrameStrip($(".framestrip-in"), frameStore, {
-    kind: "in-point"
+    kind: "in-point",
+    zoom: MAX_ZOOM
   });
 
   var frameStripOut = new FrameStrip($(".framestrip-out"), frameStore, {
-    kind: "out-point"
+    kind: "out-point",
+    zoom: MAX_ZOOM
   });
 
   function clickKey($elt, hotkey, cb) {
