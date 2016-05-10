@@ -20,7 +20,14 @@ $(function() {
   }
 
   var frameStore = new FrameStore(prog);
-  var frameStrip = new FrameStrip($(".framestrip"), frameStore);
+
+  var frameStripIn = new FrameStrip($(".framestrip-in"), frameStore, {
+    kind: "in-point"
+  });
+
+  var frameStripOut = new FrameStrip($(".framestrip-out"), frameStore, {
+    kind: "out-point"
+  });
 
   function clickKey($elt, hotkey, cb) {
     $elt.click(function(ev) {
@@ -41,11 +48,13 @@ $(function() {
   }
 
   function offsetBy(shift) {
-    frameStrip.setOffset(frameStrip.getOffset() + shift);
+    frameStripIn.setOffset(frameStripIn.getOffset() + shift);
+    frameStripOut.setOffset(frameStripOut.getOffset() + shift);
   }
 
   function zoomBy(ratio) {
-    frameStrip.setZoom(frameStrip.getZoom() * ratio);
+    frameStripIn.setZoom(frameStripIn.getZoom() * ratio);
+    frameStripOut.setZoom(frameStripOut.getZoom() * ratio);
   }
 
   clickKey($('.btn.frame-left'), 'left', function(ev) {

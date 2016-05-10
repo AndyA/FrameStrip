@@ -1,8 +1,6 @@
 function FrameStore(prog, options) {
   this.prog = prog;
-  this.opt = $.extend({}, options, {
-
-  });
+  this.opt = $.extend({}, {}, options);
 
   this.perSprite = this.prog.spriteSize.width * this.prog.spriteSize.height;
   this.zoomLevels = prog.zoomLevels.sort(function(a, b) {
@@ -31,6 +29,10 @@ $.extend(FrameStore.prototype, (function() {
   return {
     getSpriteIndex: function(frame, zoom) {
       return Math.floor(frame / zoom / this.perSprite);
+    },
+
+    getTileSize: function() {
+      return this.prog.tileSize;
     },
 
     getStripSize: function() {
