@@ -298,8 +298,7 @@ $.extend(FrameStrip.prototype, (function() {
         var half = this.canvas[0].width / 2;
 
         var center = this.opt.current !== null ? this.opt.current :
-          this.hover !== null ? this.hover : this.offsetToFrame(this.opt
-            .offset + half);
+          this.offsetToFrame(this.opt.offset + half);
 
         var size = this.store.getTileSize();
         var newOffset = center * size.width / newZoom - half;
