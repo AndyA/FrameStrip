@@ -10,7 +10,6 @@ function FrameStrip(canvas, store, options) {
   }, options);
   this.hover = null;
   this.init();
-  console.log(this.opt);
 }
 
 $.extend(FrameStrip.prototype, (function() {
@@ -123,7 +122,6 @@ $.extend(FrameStrip.prototype, (function() {
       var lastDrag = null;
 
       makeTracker(this.canvas, function(ev) {
-        //        console.log(describeEvent(ev));
         switch (ev.kind) {
           case "drag":
             var ld = lastDrag || ev.posDown;
@@ -159,7 +157,6 @@ $.extend(FrameStrip.prototype, (function() {
     setCurrent: function(frame) {
       var time = this.frameToTime(frame);
       var tc = timecode(time);
-      console.log(tc + ", " + time);
       if (this.opt.current !== frame) {
         this.opt.current = frame;
         this.redraw();
@@ -195,7 +192,6 @@ $.extend(FrameStrip.prototype, (function() {
       var first = Math.floor(offset / FRAME_WIDTH);
       var shift = offset % FRAME_WIDTH;
       if (shift < 0) shift += FRAME_WIDTH;
-      console.log("first=" + first + ", shift=" + shift);
 
       function drawCursor(pos, spec, inset) {
         ctx.beginPath();
