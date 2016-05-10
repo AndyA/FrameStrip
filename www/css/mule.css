@@ -14,3 +14,16 @@ body {
   -ms-user-select: none;
   user-select: none;
 }
+
+.strips {
+  width: 80%;
+  background-color: rgb(80, 80, 80);
+  padding: 8px;
+}
+
+.strip {
+  background-color: green;
+  height: 90px;
+  width: 100%;
+  margin-bottom: 8px;
+}

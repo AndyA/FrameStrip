@@ -42,7 +42,7 @@ $.extend(FrameStore.prototype, (function() {
       };
     },
 
-    getFrameSpec: function(img, frame, zoom) {
+    getFrameSpec: function(frame, zoom) {
       var prog = this.prog;
       var sprite = this.getSpriteIndex(frame, zoom);
       var index = Math.floor(frame / zoom) - (sprite * this.perSprite);
@@ -58,12 +58,18 @@ $.extend(FrameStore.prototype, (function() {
       });
     },
 
+    maxFrame: function() {
+      return this.prog.frames;
+    },
+
     getFrame: function(frame, zoom) {
       var self = this;
       var loaded = $.Deferred();
 
-      if (zoom < 1 || frame < 0 || frame >= this.prog.frames) {
-        loaded.reject( /*error*/ );
+      if (zoom < 1) throw new Error("Bad zoom: " + zoom);
+
+      if (frame < 0 || frame >= this.prog.frames) {
+        loaded.resolve(null, this.getFrameSpec(frame, zoom));
         return loaded.promise();
       }
 
@@ -75,7 +81,7 @@ $.extend(FrameStore.prototype, (function() {
         if (this.cache[zl] && this.cache[zl][idx] && this.cache[zl][idx]
           .loaded) {
           var ci = this.cache[zl][idx];
-          loaded.resolve(ci.img, this.getFrameSpec(ci.img, frame, zl));
+          loaded.resolve(ci.img, this.getFrameSpec(frame, zl));
           return loaded.promise();
         }
       }
@@ -118,8 +124,7 @@ $.extend(FrameStore.prototype, (function() {
       this.cache[realZoom][sprite].pending.push(
         function() {
           var ci = self.cache[realZoom][sprite];
-          loaded.resolve(ci.img, self.getFrameSpec(ci.img, frame,
-            realZoom));
+          loaded.resolve(ci.img, self.getFrameSpec(frame, realZoom));
         }
       );
 

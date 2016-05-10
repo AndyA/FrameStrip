@@ -3,7 +3,7 @@ $(function() {
   var FRAME_WIDTH = 128;
   var FRAME_HEIGHT = 72;
   var MIN_ZOOM = 1;
-  var MAX_ZOOM = 8192;
+  var MAX_ZOOM = 16384;
 
   var prog = {
     sprites: "/sprites/20020705-013950-kilroy",

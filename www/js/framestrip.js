@@ -17,7 +17,7 @@ $.extend(FrameStrip.prototype, (function() {
   var FRAME_WIDTH = 128;
   var FRAME_HEIGHT = 72;
   var MIN_ZOOM = 1;
-  var MAX_ZOOM = 8192;
+  var MAX_ZOOM = 16384;
   var FPS = 25;
 
   function quantize(x, q) {
@@ -35,6 +35,7 @@ $.extend(FrameStrip.prototype, (function() {
     var d = [FPS, 60, 60, 99];
     var p = [];
     tm *= FPS;
+    if (tm < 0) return "";
     for (var i = 0; i < d.length; i++) {
       p.unshift(pad(Math.floor(tm % d[i]), 2));
       tm = Math.floor(tm / d[i]);
@@ -134,7 +135,8 @@ $.extend(FrameStrip.prototype, (function() {
             lastDrag = null;
             break;
           case "hover":
-            var frame = self.offsetToFrame(ev.pos.x + self.opt.offset);
+            var frame = self.offsetToFrame(ev.pos.x - self.canvas[0]
+              .width / 2 + self.opt.offset);
             if (self.hover !== frame) {
               self.hover = frame;
               self.redraw();
@@ -145,7 +147,8 @@ $.extend(FrameStrip.prototype, (function() {
             self.redraw();
             break;
           case "click":
-            self.setCurrent(self.offsetToFrame(ev.pos.x + self.opt.offset));
+            self.setCurrent(self.offsetToFrame(ev.pos.x - self.canvas[
+              0].width / 2 + self.opt.offset));
             break;
         }
       });
@@ -185,10 +188,14 @@ $.extend(FrameStrip.prototype, (function() {
       var cvs = this.canvas[0];
       var ctx = cvs.getContext("2d");
 
+      var offset = this.opt.offset - cvs.width / 2;
+
       var stripWidth =
         Math.floor((cvs.width + FRAME_WIDTH) / FRAME_WIDTH);
-      var first = Math.floor(this.opt.offset / FRAME_WIDTH);
-      var shift = this.opt.offset % FRAME_WIDTH;
+      var first = Math.floor(offset / FRAME_WIDTH);
+      var shift = offset % FRAME_WIDTH;
+      if (shift < 0) shift += FRAME_WIDTH;
+      console.log("first=" + first + ", shift=" + shift);
 
       function drawCursor(pos, spec, inset) {
         ctx.beginPath();
@@ -233,10 +240,11 @@ $.extend(FrameStrip.prototype, (function() {
                 }
               }
 
-              ctx.drawImage(img,
-                spec.x, spec.y, spec.width, spec.height,
-                hpos, 0, spec.width, spec.height
-              );
+              if (img !== null)
+                ctx.drawImage(img,
+                  spec.x, spec.y, spec.width, spec.height,
+                  hpos, 0, spec.width, spec.height
+                );
 
               ctx.globalAlpha = 1;
 
@@ -263,12 +271,15 @@ $.extend(FrameStrip.prototype, (function() {
               ctx.lineTo(hpos, cvs.height);
               ctx.stroke();
 
-              var tc = timecode(self.frameToTime(frame));
-              ctx.font = '12px "Lucida Console", Monaco, monospace';
-              ctx.fillStyle = "white";
-              var m = ctx.measureText(tc);
-              ctx.fillText(tc, hpos + (spec.width - m.width) / 2,
-                spec.height + 13, spec.width);
+              if (frame >= 0 && frame < self.store.maxFrame()) {
+                var tc = timecode(self.frameToTime(frame));
+                ctx.font =
+                  '12px "Lucida Console", Monaco, monospace';
+                ctx.fillStyle = "white";
+                var m = ctx.measureText(tc);
+                ctx.fillText(tc, hpos + (spec.width - m.width) / 2,
+                  spec.height + 13, spec.width);
+              }
 
               ctx.restore();
             });
@@ -278,7 +289,7 @@ $.extend(FrameStrip.prototype, (function() {
 
     maxOffset: function() {
       var size = this.store.getStripSize();
-      return size.width / this.opt.zoom - this.canvas[0].width;
+      return size.width / this.opt.zoom;
     },
 
     getZoom: function() {
@@ -292,19 +303,20 @@ $.extend(FrameStrip.prototype, (function() {
     setZoom: function(zoom) {
       var newZoom = Math.max(MIN_ZOOM, Math.min(zoom, MAX_ZOOM));
       if (newZoom !== this.opt.zoom) {
-        var oldZoom = this.opt.zoom;
         this.opt.zoom = newZoom;
 
+        // Recenter
         var half = this.canvas[0].width / 2;
 
         var center = this.opt.current !== null ? this.opt.current :
-          this.offsetToFrame(this.opt.offset + half);
+          this.offsetToFrame(this.opt.offset);
 
         var size = this.store.getTileSize();
-        var newOffset = center * size.width / newZoom - half;
 
-        this.opt.offset = Math.floor(Math.max(0, Math.min(newOffset,
-          this.maxOffset())));
+        this.opt.offset = Math.floor(Math.max(0, Math.min(center *
+          size.width / newZoom, this.maxOffset())));
+
+        this.hover = null;
 
         this.redraw();
       }
@@ -314,7 +326,6 @@ $.extend(FrameStrip.prototype, (function() {
     setOffset: function(offset) {
       var newOffset = Math.max(0, Math.min(offset, this.maxOffset()));
       if (newOffset !== this.opt.offset) {
-        //        console.log("offset:" + newOffset);
         this.opt.offset = newOffset;
         this.redraw();
       }
