@@ -293,19 +293,16 @@ $.extend(FrameStrip.prototype, (function() {
       var newZoom = Math.max(MIN_ZOOM, Math.min(zoom, MAX_ZOOM));
       if (newZoom !== this.opt.zoom) {
         var oldZoom = this.opt.zoom;
-        //        console.log("zoom:" + newZoom);
         this.opt.zoom = newZoom;
 
-        var newOffset;
         var half = this.canvas[0].width / 2;
 
-        if (this.opt.current !== null) {
-          var size = this.store.getTileSize();
-          newOffset = this.opt.current * size.width / newZoom - half;
-        } else {
-          newOffset =
-            (this.opt.offset + half) * (oldZoom / newZoom) - half;
-        }
+        var center = this.opt.current !== null ? this.opt.current :
+          this.hover !== null ? this.hover : this.offsetToFrame(this.opt
+            .offset + half);
+
+        var size = this.store.getTileSize();
+        var newOffset = center * size.width / newZoom - half;
 
         this.opt.offset = Math.floor(Math.max(0, Math.min(newOffset,
           this.maxOffset())));
