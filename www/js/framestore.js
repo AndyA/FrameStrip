@@ -33,25 +33,27 @@ $.extend(FrameStore.prototype, (function() {
       return Math.floor(frame / zoom / this.perSprite);
     },
 
-    getTileSize: function(img) {
+    getStripSize: function() {
       return {
-        width: img.width / this.prog.spriteSize.width,
-        height: img.height / this.prog.spriteSize.height
+        width: this.prog.frames * this.prog.tileSize.width,
+        height: this.prog.tileSize.height
       };
     },
 
     getFrameSpec: function(img, frame, zoom) {
-      var tileSpec = this.getTileSize(img);
-      tileSpec.frame = frame;
-      tileSpec.zoom = zoom;
-      tileSpec.sprite = this.getSpriteIndex(frame, zoom);
-      tileSpec.index = Math.floor(frame / zoom) - (tileSpec.sprite *
-        this.perSprite);
-      tileSpec.x = (tileSpec.index % this.prog.spriteSize.width) *
-        tileSpec.width;
-      tileSpec.y = Math.floor(tileSpec.index / this.prog.spriteSize.width) *
-        tileSpec.height;
-      return tileSpec;
+      var prog = this.prog;
+      var sprite = this.getSpriteIndex(frame, zoom);
+      var index = Math.floor(frame / zoom) - (sprite * this.perSprite);
+
+      return $.extend({}, this.prog.tileSize, {
+        frame: frame,
+        zoom: zoom,
+        sprite: sprite,
+        index: index,
+        x: (index % prog.spriteSize.width) * prog.tileSize.width,
+        y: Math.floor(index / prog.spriteSize.width) * prog.tileSize
+          .height
+      });
     },
 
     getFrame: function(frame, zoom) {

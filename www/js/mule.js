@@ -11,18 +11,16 @@ $(function() {
       width: 16,
       height: 16
     },
+    tileSize: {
+      width: FRAME_WIDTH,
+      height: FRAME_HEIGHT
+    },
     frames: 100261,
     zoomLevels: [1, 2, 4, 8, 16, 32, 64, 128, 256]
   }
 
-  var fs = new FrameStore(prog);
-  var $cvs = $(".strip");
-  var cvs = $cvs[0];
-  var ctx = cvs.getContext("2d");
-  var strip_width = Math.floor((cvs.width + FRAME_WIDTH) / FRAME_WIDTH);
-
-  var zoom = 1;
-  var offset = 0;
+  var frameStore = new FrameStore(prog);
+  var frameStrip = new FrameStrip($(".framestrip"), frameStore);
 
   function clickKey($elt, hotkey, cb) {
     $elt.click(function(ev) {
@@ -42,48 +40,13 @@ $(function() {
     }
   }
 
-  function redrawStrip(zoom, offset, width) {
-    var first = Math.floor(offset / FRAME_WIDTH);
-    var shift = offset % FRAME_WIDTH;
-
-    for (var f = 0; f < width; f++) {
-      (function(frame, pos) {
-        fs.getFrame(frame, zoom)
-          .done(function(img, spec) {
-            ctx.drawImage(img,
-              spec.x, spec.y, spec.width, spec.height,
-              pos * spec.width - shift, 0, spec.width, spec.height
-            );
-          });
-      })((f + first) * zoom, f);
-    }
-  }
-
-  function maxOffset(zoom) {
-    return prog.frames * FRAME_WIDTH / zoom - cvs.width;
-  }
-
   function offsetBy(shift) {
-    var noff = Math.max(0, Math.min(offset + shift, maxOffset(zoom)));
-    if (noff !== offset) {
-      offset = noff;
-      redrawStrip(zoom, offset, strip_width);
-    }
+    frameStrip.setOffset(frameStrip.getOffset() + shift);
   }
 
   function zoomBy(ratio) {
-    var nzoom = Math.max(MIN_ZOOM, Math.min(zoom * ratio, MAX_ZOOM));
-    if (nzoom !== zoom) {
-      var half = cvs.width / 2;
-      offset = Math.floor(Math.max(0, Math.min((offset + half) * zoom /
-        nzoom - half,
-        maxOffset(nzoom))));
-      zoom = nzoom;
-      redrawStrip(zoom, offset, strip_width);
-    }
+    frameStrip.setZoom(frameStrip.getZoom() * ratio);
   }
-
-  redrawStrip(zoom, offset, strip_width);
 
   clickKey($('.btn.frame-left'), 'left', function(ev) {
     offsetBy(-FRAME_WIDTH / 4);
