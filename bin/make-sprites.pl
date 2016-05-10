@@ -40,7 +40,8 @@ sub process {
   my $frames_dir  = dir $O{output}, 'frames',  $name;
   my $sprites_dir = dir $O{output}, 'sprites', $name;
 
-  #  extract_frames( $vid, $frames_dir );
+  extract_frames( $vid, $frames_dir );
+  #  merge_frames($frames_dir);
   make_sprites( $frames_dir, $sprites_dir );
 }
 
@@ -61,6 +62,44 @@ sub extract_frames {
   say join ' ', @cmd;
   system @cmd;
   die $? if $?;
+}
+
+sub merge_frames {
+  my ($frames_dir) = @_;
+
+  my $prev = 1;
+  my $next = $prev * 2;
+  while () {
+    my $in_dir  = dir $frames_dir, 'x' . $prev;
+    my $out_dir = dir $frames_dir, 'x' . $next;
+    $out_dir->mkpath;
+    my @in = sort grep { "$_" =~ /\.png$/ } $in_dir->children;
+    say "$in_dir, $out_dir";
+    say join( " ", @in );
+    my $idx = 0;
+    while (@in) {
+      my $out = file $out_dir, sprintf "f%08d.png", $idx++;
+      if ( @in > 2 ) {
+        my @img = splice @in, 0, 2;
+        my @cmd = (
+          'convert',
+          @img,
+          '-evaluate-sequence' => 'mean',
+          $out
+        );
+        say join ' ', @cmd;
+        system @cmd;
+        die $? if $?;
+      }
+      else {
+        link $in[0], $out;
+      }
+    }
+
+    last if @in < SPRITE_WIDTH * SPRITE_HEIGHT;
+    $prev = $next;
+    $next *= 2;
+  }
 }
 
 sub make_sprites {
