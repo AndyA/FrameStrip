@@ -169,7 +169,7 @@ $.extend(FrameStrip.prototype, (function() {
 
     offsetToFrame: function(offset) {
       var size = this.store.getTileSize();
-      return Math.floor(offset / size.width) * this.opt.zoom;
+      return Math.round(offset / size.width) * this.opt.zoom;
     },
 
     frameToTime: function(frame) {
@@ -184,8 +184,9 @@ $.extend(FrameStrip.prototype, (function() {
       var self = this;
       var cvs = this.canvas[0];
       var ctx = cvs.getContext("2d");
+      var size = this.store.getTileSize();
 
-      var offset = this.opt.offset - cvs.width / 2;
+      var offset = this.opt.offset - cvs.width / 2 + size.width / 2;
 
       var stripWidth =
         Math.floor((cvs.width + FRAME_WIDTH) / FRAME_WIDTH);
