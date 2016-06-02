@@ -2,8 +2,8 @@ body {
   margin: 0;
   padding: 0;
   font-family: Helvetica, Arial, sans-serif;
-  background: white;
-  color: black;
+  background: #333;
+  color: white;
 }
 
 .no-select {
@@ -16,8 +16,24 @@ body {
 }
 
 .strips {
+  padding: 1em 1em;
 }
 
 .strip {
+}
 
+.strip .name {
+  float: left;
+  width: 4em;
+  text-align: center;
+  padding-top: 35px;
+  background-color: black;
+  height: 55px;
+  margin-right: 4px;
+  font-size: 1.2em;
+}
+
+.help {
+  padding: 1em 1em;
+  width: 900px;
 }
