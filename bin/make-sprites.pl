@@ -53,6 +53,7 @@ sub extract_frames {
 
   my @cmd = (
     'ffmpeg',
+    '-nostdin',
     -i      => $vid,
     -vf     => 'pad=max(iw\,ih*(16/9)):ow/(16/9):(ow-iw)/2:(oh-ih)/2',
     -aspect => '16:9',
