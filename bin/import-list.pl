@@ -51,6 +51,7 @@ sub load_data {
     $rec->{date} = fix_date( $rec->{date} );
     $rec->{redux_reference} =~ s/^'//;
     $rec->{duration} = undef unless length $rec->{duration};
+    $rec->{state} = "unavailable";
     #    say JSON->new->pretty->canonical->encode($rec);
     printf "%-40s %s\n", $rec->{redux_reference}, $rec->{programme_name};
     @cols = sort keys %$rec unless @cols;
