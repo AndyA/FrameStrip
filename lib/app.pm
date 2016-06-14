@@ -1,5 +1,5 @@
 package app;
-use Dancer2;
+use Dancer ':syntax';
 
 our $VERSION = '0.1';
 
