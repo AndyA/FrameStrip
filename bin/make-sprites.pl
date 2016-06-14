@@ -37,12 +37,23 @@ sub process {
   my $vid = file shift;
 
   ( my $name = $vid->basename ) =~ s/\.[^.]+$//;
-  my $frames_dir  = dir $O{output}, 'frames',  $name;
-  my $sprites_dir = dir $O{output}, 'sprites', $name;
+
+  my $frames_dir   = dir $O{output}, 'frames',       $name;
+  my $sprites_dir  = dir $O{output}, 'sprites',      $name;
+  my $sprites_work = dir $O{output}, 'sprites.work', $name;
+
+  if ( -e $sprites_dir ) {
+    say "$sprites_dir already exists";
+    return;
+  }
+
+  $sprites_work->rmtree if -d $sprites_work;
 
   extract_frames( $vid, $frames_dir );
   #  merge_frames($frames_dir);
-  make_sprites( $frames_dir, $sprites_dir );
+  make_sprites( $frames_dir, $sprites_work );
+  $sprites_dir->parent->mkpath;
+  rename $sprites_work, $sprites_dir;
 }
 
 sub extract_frames {
