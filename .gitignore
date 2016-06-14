@@ -1,6 +1,11 @@
 .*.sw?
 .DS_Store
 /MANIFEST.json
+/MYMETA.json
+/MYMETA.yml
+/Makefile
 /Session.vim
+/blib/
 /media/
 /output/
+/pm_to_blib

@@ -8,7 +8,7 @@ use Plack::Handler::FCGI;
 # correctly to the dispatchers, so forcing PSGI and env here
 # is safer.
 set apphandler => 'PSGI';
-set environment => 'production';
+set environment => 'development';
 
 my $psgi = path($RealBin, '..', 'bin', 'app.psgi');
 my $app = do($psgi);
