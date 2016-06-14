@@ -6,7 +6,7 @@ $(function() {
   var MAX_ZOOM = 16384;
 
   var prog = {
-    sprites: "/sprites/20020705-013950-kilroy",
+    sprites: "/asset/sprites/166053782893654058",
     spriteSize: {
       width: 16,
       height: 16
@@ -16,7 +16,7 @@ $(function() {
       height: FRAME_HEIGHT
     },
     frames: 100261,
-    zoomLevels: [1, 2, 4, 8, 16, 32, 64, 128, 256]
+    zoomLevels: [1, 2, 4, 8, 16, 32, 64, 128]
   }
 
   var frameStore = new FrameStore(prog);
