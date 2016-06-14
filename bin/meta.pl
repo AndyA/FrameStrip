@@ -13,6 +13,7 @@ use XML::LibXML;
 for my $file (@ARGV) {
   ( my $meta = $file ) =~ s/\.[^.]+$/.json/;
   next if -e $meta;
+  say $file;
   my $info = analyse($file);
   my $tmp  = "$meta.tmp.json";
   print { file($tmp)->openw } JSON->new->pretty->canonical->encode($info);
