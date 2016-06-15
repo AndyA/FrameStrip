@@ -1,13 +1,12 @@
 $(function() {
+  var FRAME_WIDTH = 128;
+  var FRAME_HEIGHT = 72;
+  var MIN_ZOOM = 1;
+  var MAX_ZOOM = 16384;
 
-  if (STASH.programme.redux_reference) {
-    var FRAME_WIDTH = 128;
-    var FRAME_HEIGHT = 72;
-    var MIN_ZOOM = 1;
-    var MAX_ZOOM = 16384;
-
+  function buildInterface(programme) {
     var prog = {
-      sprites: "/asset/sprites/" + STASH.redux_reference,
+      sprites: "/asset/sprites/" + programme.redux_reference,
       spriteSize: {
         width: 16,
         height: 16
@@ -16,7 +15,7 @@ $(function() {
         width: FRAME_WIDTH,
         height: FRAME_HEIGHT
       },
-      frames: STASH.programme.duration * 25 / 1000,
+      frames: programme.duration * 25 / 1000,
       zoomLevels: [1, 2, 4, 8, 16, 32, 64, 128]
     }
 
@@ -84,6 +83,10 @@ $(function() {
     clickKey($('.btn.zoom-out'), '-', function(ev) {
       zoomBy(2);
     });
+  }
+
+  if (STASH.programme) {
+    buildInterface(STASH.programme);
   }
 
 });
