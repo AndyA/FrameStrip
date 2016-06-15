@@ -1,6 +1,6 @@
 $(function() {
 
-  if (STASH.redux_reference) {
+  if (STASH.programme.redux_reference) {
     var FRAME_WIDTH = 128;
     var FRAME_HEIGHT = 72;
     var MIN_ZOOM = 1;
@@ -16,7 +16,7 @@ $(function() {
         width: FRAME_WIDTH,
         height: FRAME_HEIGHT
       },
-      frames: STASH.duration * 25 / 1000,
+      frames: STASH.programme.duration * 25 / 1000,
       zoomLevels: [1, 2, 4, 8, 16, 32, 64, 128]
     }
 
