@@ -23,6 +23,7 @@ sub asset {
     $id
   );
 
+  return $data;
 }
 
 1;

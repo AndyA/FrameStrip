@@ -4,14 +4,34 @@ use Dancer ':syntax';
 use Dancer::Plugin::Database;
 
 use Framestrip::Model;
+use JSON ();
 
 our $VERSION = '0.1';
+
+sub model() {
+  Framestrip::Model->new( dbh => database );
+}
 
 prefix '/data' => sub {
   get '/asset/:id' => sub {
     my $model = Framestrip::Model->new( dbh => database );
     return $model->asset( param('id') );
   };
+};
+
+get qr{\/p\/(\d+)} => sub {
+  my ($id) = splat;
+  my $prog = model->asset($id);
+  unless ($prog) {
+    status 404;
+    return halt;
+  }
+  my $stash = {
+    programme => $prog,
+    title     => $prog->{programme_name},
+  };
+  $stash->{stash} = JSON->new->encode($stash);
+  template 'index', $stash;
 };
 
 get '/' => sub {
