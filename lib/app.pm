@@ -14,13 +14,11 @@ sub model() {
 
 prefix '/data' => sub {
   get '/list/:start/:size' => sub {
-    my $model = Framestrip::Model->new( dbh => database );
-    return $model->list( param('start'), param('size') );
+    return model->list( param('start'), param('size') );
   };
 
   get '/asset/:id' => sub {
-    my $model = Framestrip::Model->new( dbh => database );
-    return $model->asset( param('id') );
+    return model->asset( param('id') );
   };
 };
 
@@ -40,8 +38,21 @@ get qr{\/p\/(\d+)} => sub {
   template 'programme', $stash;
 };
 
+post '/update' => sub {
+  my $model = model;
+  $model->update( param('redux_reference'), param('in'), param('out') );
+  my $next = $model->random;
+  redirect '/p/' . $next;
+};
+
+post '/lock' => sub {
+  model->lock( param('redux_reference'), request->remote_address );
+  return {};
+};
+
 get '/' => sub {
-  template 'index', { title => "Tones & Bars" };
+  my $list = model->list();
+  template 'index', { title => "Tones & Bars", stash => $list };
 };
 
 true;

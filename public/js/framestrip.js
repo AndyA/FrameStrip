@@ -156,11 +156,12 @@ $.extend(FrameStrip.prototype, (function() {
 
     setCurrent: function(frame) {
       var time = this.frameToTime(frame);
-      var tc = timecode(time);
       if (this.opt.current !== frame) {
         this.opt.current = frame;
         this.redraw();
       }
+      var tc = timecode(time);
+      this.canvas.triggerHandler("setcurrent", [time, tc]);
     },
 
     getCurrent: function() {

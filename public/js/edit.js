@@ -5,6 +5,10 @@ $(function() {
   var MAX_ZOOM = 16384;
 
   function buildInterface(programme) {
+    var zoomLevels = programme.zoom_levels.split(",")
+      .map(function(x) {
+        return parseInt(x, 10)
+      });
     var prog = {
       sprites: "/asset/sprites/" + programme.redux_reference,
       spriteSize: {
@@ -16,7 +20,7 @@ $(function() {
         height: FRAME_HEIGHT
       },
       frames: programme.duration * 25 / 1000,
-      zoomLevels: [1, 2, 4, 8, 16, 32, 64, 128]
+      zoomLevels: zoomLevels
     }
 
     var frameStore = new FrameStore(prog);
@@ -30,6 +34,24 @@ $(function() {
       kind: "out-point",
       zoom: MAX_ZOOM
     });
+
+    $(".framestrip-in")
+      .on("setcurrent", function(ev, time, tc) {
+        $("input[name='in']")
+          .val(tc);
+      });
+
+    $(".framestrip-out")
+      .on("setcurrent", function(ev, time, tc) {
+        $("input[name='out']")
+          .val(tc);
+      });
+
+    if (programme.in !== null)
+      frameStripIn.setCurrent(programme.in * 25 / 1000);
+
+    if (programme.out !== null)
+      frameStripOut.setCurrent(programme.out * 25 / 1000);
 
     function clickKey($elt, hotkey, cb) {
       $elt.click(function(ev) {
@@ -85,8 +107,16 @@ $(function() {
     });
   }
 
+  function refreshLock() {
+    $.post("/lock", {
+      redux_reference: STASH.programme.redux_reference
+    });
+  }
+
   if (STASH.programme) {
     buildInterface(STASH.programme);
+    refreshLock();
+    setInterval(refreshLock, 5000);
   }
 
 });

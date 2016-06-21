@@ -13,6 +13,13 @@
   </div>
 </div>
 
+<form class="edit-points" action="/update" method="POST">
+  <input type="hidden" name="redux_reference" value="[% programme.redux_reference %]">
+  <label>in: <input type="text" name="in" size="11" required></label>
+  <label>out: <input type="text" name="out" size="11" required></label>
+  <input type="submit" name="save" value="Save">
+</form>
+
 <div class="help">
   <p>Drag the frame strips left and right using the mouse.</p>
   <p>Zoom in and out using the '+' and '-' keys.</p>
