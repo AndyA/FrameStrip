@@ -26,6 +26,20 @@ sub asset {
   return $data;
 }
 
+sub list {
+  my ( $self, $start, $size, $filter, $order ) = @_;
+  my $list = $self->dbh->selectall_arrayref(
+    join( ' ',
+      "SELECT p.*, e.in, e.out, e.when",
+      "  FROM programmes AS p",
+      "  LEFT JOIN programme_edits AS e",
+      "    ON e.redux_reference = p.redux_reference",
+      " LIMIT ?, ?" ),
+    { Slice => {} },
+    $start, $size
+  );
+}
+
 1;
 
 # vim:ts=2:sw=2:sts=2:et:ft=perl

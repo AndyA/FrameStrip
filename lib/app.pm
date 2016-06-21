@@ -13,6 +13,11 @@ sub model() {
 }
 
 prefix '/data' => sub {
+  get '/list/:start/:size' => sub {
+    my $model = Framestrip::Model->new( dbh => database );
+    return $model->list( param('start'), param('size') );
+  };
+
   get '/asset/:id' => sub {
     my $model = Framestrip::Model->new( dbh => database );
     return $model->asset( param('id') );
@@ -31,11 +36,12 @@ get qr{\/p\/(\d+)} => sub {
     title     => $prog->{programme_name},
   };
   $stash->{stash} = JSON->new->encode($stash);
-  template 'index', $stash;
+  $stash->{scripts} = ['framestore', 'framestrip', 'edit'];
+  template 'programme', $stash;
 };
 
 get '/' => sub {
-  template 'index';
+  template 'index', { title => "Tones & Bars" };
 };
 
 true;

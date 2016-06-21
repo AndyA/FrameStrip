@@ -1,0 +1,26 @@
+<header class="header">
+  <h1>[% title | html %]</h1>
+</header>
+
+<div class="strips">
+  <div class="strip strip-in">
+    <div class="name">IN</div>
+    <canvas class="framestrip-in" width="900" height="90"></canvas>
+  </div>
+  <div class="strip strip-out">
+    <div class="name">OUT</div>
+    <canvas class="framestrip-out" width="900" height="90"></canvas>
+  </div>
+</div>
+
+<div class="help">
+  <p>Drag the frame strips left and right using the mouse.</p>
+  <p>Zoom in and out using the '+' and '-' keys.</p>
+  <p>Mark the in and out frames by clicking on the film strip.</p>
+  <p>As you zoom in you'll have to refine the in/out frames. When you
+     hit the maximum zoom level you are working with single frames on
+     the film strip - so the in and out points can be marked with
+     complete precision.</p>
+</div>
+
+

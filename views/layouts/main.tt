@@ -3,15 +3,20 @@
   <head>
     <title>[% title | html %]</title>
     <link href="/css/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="/css/mule.css" rel="stylesheet" />
+    <link href="/css/main.css" rel="stylesheet" />
+    [% FOREACH style IN styles %]
+      <link href="/css/[% style %].css" rel="stylesheet" />
+    [% END %]
     <script src="/js/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script src="/js/jquery.hotkeys.js" type="text/javascript"></script>
-    <script src="/js/framestore.js" type="text/javascript"></script>
-    <script src="/js/framestrip.js" type="text/javascript"></script>
-    <script src="/js/mule.js" type="text/javascript"></script>
-    <script type="text/javascript">
-      var STASH = [% stash %];
-    </script>
+    [% FOREACH script IN scripts %]
+      <script src="/js/[% script %].js" type="text/javascript"></script>
+    [% END %]
+    [% IF stash %]
+      <script type="text/javascript">
+        var STASH = [% stash %];
+      </script>
+    [% END %]
   </head>
   <body>
     [% content %]
