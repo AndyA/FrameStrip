@@ -44,7 +44,7 @@ sub go_next {
   my $model = model;
   my $next  = $model->random;
   my $stats = $model->stats;
-  if ( $stats->{pending} == 0 ) {
+  if ( $stats->{pending} + $stats->{unavailable} == 0 ) {
     template 'all-done', { title => 'All Done', stats => $stats };
   }
   elsif ( !defined $next ) {
