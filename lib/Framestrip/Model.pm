@@ -73,7 +73,11 @@ sub list {
     @bind, $start, $size
   );
 
-  return { list => $list, count => $count };
+  return {
+    list  => $list,
+    count => $count,
+    stats => $self->stats
+  };
 }
 
 sub parse_timecode {
@@ -143,6 +147,19 @@ sub random {
     'pending'
   );
   return $id;
+}
+
+sub stats {
+  my $self  = shift;
+  my $stats = $self->dbh->selectall_arrayref(
+    "SELECT `state`, COUNT(*) AS `count` FROM `programmes` GROUP BY `state`",
+    { Slice => {} }
+  );
+  my $by_state = {};
+  for my $row (@$stats) {
+    $by_state->{ $row->{state} } = $row->{count};
+  }
+  return $by_state;
 }
 
 1;

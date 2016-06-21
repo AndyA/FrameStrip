@@ -35,23 +35,39 @@ $(function() {
       zoom: MAX_ZOOM
     });
 
+    function canSubmit() {
+      var in_point = $("input[name='in']")
+        .val();
+      var out_point = $("input[name='out']")
+        .val();
+      if (in_point.length && out_point.length)
+        $("input[type='submit']")
+        .removeAttr("disabled");
+      else
+        $("input[type='submit']")
+        .attr("disabled", "disabled");
+    }
+
     $(".framestrip-in")
       .on("setcurrent", function(ev, time, tc) {
         $("input[name='in']")
           .val(tc);
+        canSubmit();
       });
 
     $(".framestrip-out")
       .on("setcurrent", function(ev, time, tc) {
         $("input[name='out']")
           .val(tc);
+        canSubmit();
       });
-
     if (programme.in !== null)
       frameStripIn.setCurrent(programme.in * 25 / 1000);
 
     if (programme.out !== null)
       frameStripOut.setCurrent(programme.out * 25 / 1000);
+
+    canSubmit();
 
     function clickKey($elt, hotkey, cb) {
       $elt.click(function(ev) {
@@ -109,8 +125,16 @@ $(function() {
 
   function refreshLock() {
     $.post("/lock", {
-      redux_reference: STASH.programme.redux_reference
-    });
+        redux_reference: STASH.programme.redux_reference
+      })
+      .done(function(stats) {
+        var kind = Object.keys(stats);
+        for (var i = 0; i < kind.length; i++) {
+          $(".stats .stat." + kind[i])
+            .text(stats[kind[i]]);
+        }
+        console.log(stats);
+      });
   }
 
   if (STASH.programme) {

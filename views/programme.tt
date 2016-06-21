@@ -1,7 +1,3 @@
-<header class="header">
-  <h1>[% title | html %]</h1>
-</header>
-
 <div class="strips">
   <div class="strip strip-in">
     <div class="name">IN</div>
@@ -29,5 +25,3 @@
      the film strip - so the in and out points can be marked with
      complete precision.</p>
 </div>
-
-

@@ -38,9 +38,19 @@ body {
   font-size: 1.2em;
 }
 
-.edit-points {
+.edit-points, .stats {
   padding: 1em 1em;
   background: rgba(0, 0, 0, 0.3);
+}
+
+.message {
+  padding: 2em 2em;
+  font-size: 1.5em;
+}
+
+.stats .stat {
+  font-weight: bold;
+  padding-right: 1em;
 }
 
 .edit-points input[type="submit"] {

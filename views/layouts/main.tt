@@ -19,6 +19,16 @@
     [% END %]
   </head>
   <body>
+    <header class="header">
+      <h1>[% title | html %]</h1>
+    </header>
+
+    <div class="stats">
+      Importing: <span class="stat unavailable">[% stats.unavailable %]</span>
+      Pending: <span class="stat pending">[% stats.pending %]</span>
+      Done: <span class="stat done">[% stats.done %]</span>
+    </div>
+
     [% content %]
   </body>
 </html>
