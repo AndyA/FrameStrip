@@ -9,6 +9,7 @@ use warnings;
 
 use Dancer ':script';
 use Dancer::Plugin::Database;
+use File::Find;
 use Getopt::Long;
 use JSON::XS;
 use Path::Class;
@@ -33,16 +34,31 @@ GetOptions(
   'e|ext:s'    => \$O{ext},
 ) or die USAGE;
 
-my $logf = file $O{outdir}, "log.txt";
-$logf->parent->mkpath;
-my $lh = $logf->openw;
-
 for my $vid (@ARGV) {
-  my $vf = file $vid;
+  process($vid);
+}
 
-  ( my $name = $vf->basename ) =~ s/(\d+)\..*$/$1/;
+sub process {
+  for my $obj (@_) {
+    if ( -d $obj ) {
+      find {
+        wanted => sub {
+          return unless /\.(?:mpeg)ts$/i;
+          trim($_);
+        },
+        no_chdir => 1
+      }, $obj;
+    }
+    else {
+      trim($obj);
+    }
+  }
+}
 
-  my $info = database->selectrow_hashref(
+sub get_info {
+  my $name = shift;
+
+  return database->selectrow_hashref(
     join( " ",
       "SELECT *",
       "  FROM `programmes` AS `p`",
@@ -52,18 +68,30 @@ for my $vid (@ARGV) {
     {},
     $name
   );
+}
 
-  unless ( $info && defined $info->{in} && defined $info->{out} ) {
-    warn "No edit info for $vf";
-    next;
+sub trim {
+  my $vf = file $_[0];
+
+  ( my $name = $vf->basename ) =~ s/(\d+)\..*$/$1/;
+  my $out = file $O{outdir}, "$name.$O{ext}";
+
+  if ( -M $out < -M $vf ) {
+    warn "$out exists and is newer\n";
+    return;
   }
 
-  my $out = file $O{outdir}, "$name.$O{ext}";
+  my $info = get_info($name);
+
+  unless ( $info && defined $info->{in} && defined $info->{out} ) {
+    warn "No edit info for $vf\n";
+    return;
+  }
+
   my $tmp = file $O{outdir}, "$name.tmp.$O{ext}";
 
   my $start    = $info->{in} / 1000;
   my $duration = ( $info->{out} - $info->{in} ) / 1000;
-  say $lh join "\t", $out, $start, $duration;
 
   my @cmd = (
     'ffmpeg',
@@ -78,6 +106,12 @@ for my $vid (@ARGV) {
   say join ' ', @cmd;
   $out->parent->mkpath;
   system @cmd;
+
+  if ($?) {
+    warn "Failed to process $vf\n";
+    return;
+  }
+
   rename $tmp, $out;
 }
 
