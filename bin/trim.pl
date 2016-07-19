@@ -97,7 +97,6 @@ sub trim {
     'ffmpeg',
     -fflags => '+genpts',
     -ss     => $start,
-    -f      => 'mpegts',
     -i      => $vf,
     -c      => 'copy',
     -t      => $duration,
