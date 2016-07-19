@@ -76,7 +76,7 @@ sub trim {
   ( my $name = $vf->basename ) =~ s/(\d+)\..*$/$1/;
   my $out = file $O{outdir}, "$name.$O{ext}";
 
-  if ( -M $out < -M $vf ) {
+  if ( -e $out && -M $out < -M $vf ) {
     warn "$out exists and is newer\n";
     return;
   }
