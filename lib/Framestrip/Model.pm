@@ -155,7 +155,11 @@ sub stats {
     "SELECT `state`, COUNT(*) AS `count` FROM `programmes` GROUP BY `state`",
     { Slice => {} }
   );
-  my $by_state = {};
+  my $by_state = {
+    unavailable => 0,
+    pending     => 0,
+    done        => 0
+  };
   for my $row (@$stats) {
     $by_state->{ $row->{state} } = $row->{count};
   }
