@@ -20,7 +20,7 @@ use constant SRC => dir('ref/list.csv');
 my $data = load_csv(SRC);
 
 database->do("START TRANSACTION");
-database->do("TRUNCATE `$_`") for 'programmes';
+#database->do("TRUNCATE `$_`") for 'programmes';
 
 load_data( database, $data );
 
