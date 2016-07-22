@@ -2,7 +2,7 @@
 
 ts="/data/d3/mpegts"
 
-while ssleep 600; do
+while ssleep 60; do
   find "$ts" -name '*.mpegts' -mmin +10 -print0 | xargs -0 perl bin/meta.pl
 done
 
