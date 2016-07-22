@@ -1,11 +1,11 @@
 <div class="strips">
   <div class="strip strip-in">
     <div class="name">IN</div>
-    <canvas class="framestrip-in" width="900" height="90"></canvas>
+    <canvas class="framestrip-in framestrip" width="900" height="90"></canvas>
   </div>
   <div class="strip strip-out">
     <div class="name">OUT</div>
-    <canvas class="framestrip-out" width="900" height="90"></canvas>
+    <canvas class="framestrip-out framestrip" width="900" height="90"></canvas>
   </div>
 </div>
 
