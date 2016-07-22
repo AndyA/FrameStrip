@@ -3,6 +3,7 @@ $(function() {
   var FRAME_HEIGHT = 72;
   var MIN_ZOOM = 1;
   var MAX_ZOOM = 16384;
+  var GAP = 120;
 
   function buildInterface(programme) {
     var zoomLevels = programme.zoom_levels.split(",")
@@ -25,6 +26,8 @@ $(function() {
 
     var frameStore = new FrameStore(prog);
 
+    resize();
+
     var frameStripIn = new FrameStrip($(".framestrip-in"), frameStore, {
       kind: "in-point",
       zoom: MAX_ZOOM
@@ -34,6 +37,22 @@ $(function() {
       kind: "out-point",
       zoom: MAX_ZOOM
     });
+
+    $(window)
+      .resize(function() {
+        resize();
+        if (frameStripIn) frameStripIn.redraw();
+        if (frameStripOut) frameStripOut.redraw();
+      });
+
+    function resize() {
+      var width = $(window)
+        .width();
+      $(".framestrip")
+        .attr({
+          width: width - GAP
+        });
+    }
 
     function canSubmit() {
       var in_point = $("input[name='in']")

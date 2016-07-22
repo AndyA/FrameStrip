@@ -187,6 +187,11 @@ $.extend(FrameStrip.prototype, (function() {
       var ctx = cvs.getContext("2d");
       var size = this.store.getTileSize();
 
+      ctx.save();
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, cvs.width, cvs.height);
+      ctx.restore();
+
       var offset = this.opt.offset - cvs.width / 2 + size.width / 2;
 
       var stripWidth =
